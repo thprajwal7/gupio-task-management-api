@@ -49,7 +49,7 @@ class Task(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     title = Column(String(100), nullable=False, index=True)
-    description = Column(Text(500), nullable=True)
+    description = Column(String(500), nullable=True)
     status = Column(String(50), nullable=False, default="pending", index=True)
     priority = Column(String(50), nullable=False, default="medium", index=True)
     due_date = Column(Date, nullable=True, index=True)
@@ -89,7 +89,7 @@ class ActivityLog(Base):
         Integer, ForeignKey("tasks.id", ondelete="CASCADE"), nullable=True, index=True
     )
     action = Column(String(50), nullable=False)
-    description = Column(Text(500), nullable=False)
+    description = Column(String(500), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     user = relationship("User", back_populates="activities")
