@@ -1,0 +1,203 @@
+{
+    "info": {
+        "name": "Task Management REST API (Gupio)",
+        "description": "Postman collection for the Task Management REST API.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "1. Health Checks",
+            "item": [
+                {
+                    "name": "Health",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/health"
+                    }
+                },
+                {
+                    "name": "Health DB",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/health/db"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "2. Auth",
+            "item": [
+                {
+                    "name": "Register User",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{base_url}}/api/v1/auth/register",
+                        "header": [
+                            {"key": "Content-Type", "value": "application/json"}
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"Password123\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "pm.environment.set(\"token\", jsonData.data.access_token);"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "url": "{{base_url}}/api/v1/auth/login",
+                        "header": [
+                            {"key": "Content-Type", "value": "application/x-www-form-urlencoded"}
+                        ],
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {"key": "username", "value": "testuser@example.com"},
+                                {"key": "password", "value": "Password123"}
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Current User",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/api/v1/users/me",
+                        "header": [
+                            {"key": "Authorization", "value": "Bearer {{token}}"}
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "3. Tasks",
+            "item": [
+                {
+                    "name": "Create Task",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "pm.environment.set(\"task_id\", jsonData.data.id);"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "url": "{{base_url}}/api/v1/tasks",
+                        "header": [
+                            {"key": "Authorization", "value": "Bearer {{token}}"},
+                            {"key": "Content-Type", "value": "application/json"}
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Complete Gupio Assignment\",\n  \"description\": \"Write tests and document\",\n  \"status\": \"pending\",\n  \"priority\": \"high\",\n  \"due_date\": \"2024-12-31\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "List Tasks (with filters/pagination)",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/api/v1/tasks?status=pending&priority=high&page=1&limit=10",
+                        "header": [
+                            {"key": "Authorization", "value": "Bearer {{token}}"}
+                        ]
+                    }
+                },
+                {
+                    "name": "Search Tasks",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/api/v1/tasks?search=Gupio",
+                        "header": [
+                            {"key": "Authorization", "value": "Bearer {{token}}"}
+                        ]
+                    }
+                },
+                {
+                    "name": "Get Task",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/api/v1/tasks/{{task_id}}",
+                        "header": [
+                            {"key": "Authorization", "value": "Bearer {{token}}"}
+                        ]
+                    }
+                },
+                {
+                    "name": "Update Task",
+                    "request": {
+                        "method": "PUT",
+                        "url": "{{base_url}}/api/v1/tasks/{{task_id}}",
+                        "header": [
+                            {"key": "Authorization", "value": "Bearer {{token}}"},
+                            {"key": "Content-Type", "value": "application/json"}
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Complete Gupio Assignment\",\n  \"description\": \"Finished and submitted\",\n  \"status\": \"completed\",\n  \"priority\": \"high\",\n  \"due_date\": \"2024-12-31\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Task",
+                    "request": {
+                        "method": "DELETE",
+                        "url": "{{base_url}}/api/v1/tasks/{{task_id}}",
+                        "header": [
+                            {"key": "Authorization", "value": "Bearer {{token}}"}
+                        ]
+                    }
+                },
+                {
+                    "name": "Overdue Tasks",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/api/v1/tasks/overdue",
+                        "header": [
+                            {"key": "Authorization", "value": "Bearer {{token}}"}
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "4. Dashboard",
+            "item": [
+                {
+                    "name": "Get Dashboard Stats",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/api/v1/dashboard",
+                        "header": [
+                            {"key": "Authorization", "value": "Bearer {{token}}"}
+                        ]
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string"
+        }
+    ]
+}
